@@ -1,0 +1,15 @@
+# Producer service: simulates a stream of synthetic transactions onto Kafka.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ ./app/
+COPY training/ ./training/
+
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["python", "-m", "app.producer"]
+CMD ["--rate", "10", "--fraud-rate", "0.03"]

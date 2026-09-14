@@ -1,0 +1,20 @@
+# API service: FastAPI stats endpoint + Chart.js dashboard. Never talks to
+# Kafka directly -- only reads the shared SQLite stats store and model file.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ ./app/
+COPY training/ ./training/
+
+ENV PYTHONUNBUFFERED=1
+ENV STATS_DB_PATH=/data/stats.db
+
+RUN mkdir -p /data
+
+EXPOSE 8000
+
+CMD ["uvicorn", "app.api:app", "--host", "0.0.0.0", "--port", "8000"]

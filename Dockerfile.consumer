@@ -1,0 +1,18 @@
+# Consumer/scorer service: consumes transactions.raw, scores with XGBoost,
+# publishes transactions.scored, and records rolling stats to SQLite.
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY app/ ./app/
+COPY training/ ./training/
+
+ENV PYTHONUNBUFFERED=1
+ENV STATS_DB_PATH=/data/stats.db
+
+RUN mkdir -p /data
+
+CMD ["python", "-m", "app.consumer"]
